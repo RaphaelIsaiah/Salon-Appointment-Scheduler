@@ -15,24 +15,27 @@ DISPLAY_SERVICES() {
         echo -e "\n$1"
     fi
 
-    # Welcome the customer and display the available services
-    # echo "Which service would you like today?"
-
     SERVICES=$($PSQL "SELECT service_id, name FROM services ORDER BY service_id")
     echo "$SERVICES" | while IFS="|" read SERVICE_ID SERVICE_NAME; do
         echo "$SERVICE_ID) $SERVICE_NAME"
     done
 
+    # Add an exit option
+    echo "0) Exit"
+
     # read the user's selection
     read SERVICE_ID_SELECTED
 
-    # validate user's selection
-    SELECTED_SERVICE=$($PSQL "SELECT name FROM services WHERE service_id = $SERVICE_ID_SELECTED")
-
-    if [[ -z $SELECTED_SERVICE ]]; then
-        DISPLAY_SERVICES "I could not find that service. What would you like today?"
+    # Validate service selection or handle exit
+    if [[ $SERVICE_ID_SELECTED -eq 0 ]]; then
+        EXIT
     else
-        GET_CUSTOMER_INFO
+        SELECTED_SERVICE=$($PSQL "SELECT name FROM services WHERE service_id = $SERVICE_ID_SELECTED")
+        if [[ -z $SELECTED_SERVICE ]]; then
+            DISPLAY_SERVICES "I could not find that service. What would you like today?"
+        else
+            GET_CUSTOMER_INFO
+        fi
     fi
 
 }
@@ -70,6 +73,11 @@ SCHEDULE_APPOINTMENT() {
     # confirm the booking
     echo -e "\nI have put you down for a $SELECTED_SERVICE at $SERVICE_TIME, $CUSTOMER_NAME."
 
+}
+
+EXIT() {
+    echo -e "\nThank you for visiting the salon. Have a great day!\n"
+    exit 0 # This exits the script successfully with status code 0
 }
 
 # Start the script by calling the display services function
