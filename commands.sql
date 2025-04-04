@@ -15,4 +15,4 @@
 -- ALTER TABLE appointments ADD FOREIGN KEY(service_id) REFERENCES services(service_id);
 -- ALTER TABLE appointments ADD FOREIGN KEY(customer_id) REFERENCES customers(customer_id);
 -- INSERT INTO services(name) VALUES('Haircut'),('Shave'),('Pedicure');
-
+TRUNCATE TABLE appointments, customers RESTART IDENTITY CASCADE;

@@ -27,9 +27,9 @@ DISPLAY_SERVICES() {
     read SERVICE_ID_SELECTED
 
     # validate user's selection
-    SERVICE_AVAILABILITY=$($PSQL "SELECT name FROM services WHERE service_id = $SERVICE_ID_SELECTED")
+    SELECTED_SERVICE=$($PSQL "SELECT name FROM services WHERE service_id = $SERVICE_ID_SELECTED")
 
-    if [[ -z $SERVICE_AVAILABILITY ]]; then
+    if [[ -z $SELECTED_SERVICE ]]; then
         DISPLAY_SERVICES "I could not find that service. What would you like today?"
     else
         GET_CUSTOMER_INFO
@@ -48,15 +48,29 @@ GET_CUSTOMER_INFO() {
     if [[ -z $CUSTOMER_NAME ]]; then
         echo -e "\nI don't have a record for that phone number, what's your name?"
         read CUSTOMER_NAME
-        INSERT_CUSTOMER_RESULT=$($PSQL "INSERT INTO customers(name, phone) VALUES('CUSTOMER_NAME', 'CUSTOMER_PHONE')")
+        INSERT_CUSTOMER_RESULT=$($PSQL "INSERT INTO customers(name, phone) VALUES('$CUSTOMER_NAME', '$CUSTOMER_PHONE')")
     fi
+
+    # get customer id
+    CUSTOMER_ID=$($PSQL "SELECT customer_id from customers WHERE phone = '$CUSTOMER_PHONE'")
 
     # proceed to schedule the appointment
     SCHEDULE_APPOINTMENT
 
 }
 
-SCHEDULE_APPOINTMENT() {}
+# schedule appointment function
+SCHEDULE_APPOINTMENT() {
+    echo -e "\nWhat time would you like your $SELECTED_SERVICE, $CUSTOMER_NAME?"
+    read SERVICE_TIME
+
+    # insert appointment to the database
+    INSERT_APPOINTMENT=$($PSQL "INSERT INTO appointments(time, service_id, customer_id) VALUES('$SERVICE_TIME', $SERVICE_ID_SELECTED, $CUSTOMER_ID)")
+
+    # confirm the booking
+    echo -e "\nI have put you down for a $SELECTED_SERVICE at $SERVICE_TIME, $CUSTOMER_NAME."
+
+}
 
 # Start the script by calling the display services function
 DISPLAY_SERVICES
