@@ -9,7 +9,7 @@ echo -e "\n~~~~~ THE SALON ~~~~~\n"
 echo -e "Welcome to the salon, which service would you like today?\n"
 
 # Display services function
-DISPLAY_SERVICES() {
+MAIN_MENU() {
     # if an argument is passed to this function, display it
     if [[ $1 ]]; then
         echo -e "\n$1"
@@ -73,6 +73,16 @@ SCHEDULE_APPOINTMENT() {
     # confirm the booking
     echo -e "\nI have put you down for a $SELECTED_SERVICE at $SERVICE_TIME, $CUSTOMER_NAME."
 
+    # Reset variables
+    SERVICE_TIME=""
+    SERVICE_ID_SELECTED=""
+    SELECTED_SERVICE=""
+    CUSTOMER_NAME=""
+    CUSTOMER_PHONE=""
+    CUSTOMER_ID=""
+
+    # Redirect to main menu
+    MAIN_MENU "Would you like to book another service?"
 }
 
 EXIT() {
@@ -81,4 +91,4 @@ EXIT() {
 }
 
 # Start the script by calling the display services function
-DISPLAY_SERVICES
+MAIN_MENU
