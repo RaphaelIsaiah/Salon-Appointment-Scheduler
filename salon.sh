@@ -32,7 +32,7 @@ MAIN_MENU() {
     else
         SELECTED_SERVICE=$($PSQL "SELECT name FROM services WHERE service_id = $SERVICE_ID_SELECTED")
         if [[ -z $SELECTED_SERVICE ]]; then
-            DISPLAY_SERVICES "I could not find that service. What would you like today?"
+            MAIN_MENU "I could not find that service. What would you like today?"
         else
             GET_CUSTOMER_INFO
         fi
